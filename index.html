@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f6c4c2"><!-- original: #f8c4d3 -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="description" content="A simple half-marathon training plan and progress tracker.">
+  <title>Half Marathon Plan</title>
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="icon" href="./icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="./apple-touch-icon.png">
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <h1>Murcia 21k</h1>
+    <div class="race-date"><span class="days-left" id="daysLeft"></span><span>Race day</span>7 Feb 2027</div>
+  </div>
+</header>
+<main class="wrap">
+ <div class="view" id="view-week">
+  <section class="dots-card subtle" aria-label="Weeks completed">
+    <span>Completed</span>
+    <div class="dots"></div>
+    <strong class="dots-text">0 / 14</strong>
+  </section>
+  <div id="focus"></div>
+ </div>
+
+ <div class="view" id="view-training" hidden>
+  <section class="dots-card" aria-label="Weeks completed">
+    <span>Completed</span>
+    <div class="dots"></div>
+    <strong class="dots-text">0 / 14</strong>
+  </section>
+  <div id="weeks"></div>
+ </div>
+
+ <div class="view" id="view-goal" hidden>
+  <section class="summary" aria-label="Training targets">
+    <div class="stat"><strong>1:38:00</strong><span>Main goal</span></div>
+    <div class="stat"><strong>4:39/km</strong><span>Goal pace</span></div>
+    <div class="stat"><strong>Sub-1:35</strong><span>Stretch goal</span></div>
+  </section>
+
+  <section class="progress-card">
+    <div class="progress-head"><span>Overall progress</span><strong id="overallText">0 / 14 weeks</strong></div>
+    <div class="chart feel-chart" id="feelChart" role="img" aria-label="Sessions completed per week, and how each one felt"></div>
+    <div class="chart-axis"><span>2 Nov</span><span>7 Feb</span></div>
+    <div class="progress-foot"><span class="muted small" id="workoutText">0 of 70 sessions</span><span class="feel-legend" id="feelLegend"></span></div>
+  </section>
+
+  <section class="tempo-card">
+    <div class="progress-head"><span>Tempo pace</span></div>
+    <div class="tempo-now"><strong id="tempoNow">–:––</strong><span class="unit">/km</span><span class="tempo-delta" id="tempoDelta"></span></div>
+    <form class="tempo-form" id="tempoForm" novalidate>
+      <input id="tempoPace" inputmode="decimal" autocomplete="off" placeholder="4:45" aria-label="Tempo pace per km (m:ss)">
+      <input id="tempoDate" type="date" aria-label="Date">
+      <button type="submit">Log</button>
+    </form>
+    <ul class="tempo-log" id="tempoLog"></ul>
+  </section>
+
+  <section class="info">
+    <h2>Training guide</h2>
+    <p><strong>Easy / recovery:</strong> about 5:40–6:15/km, conversational effort.</p>
+    <p><strong>Long runs:</strong> about 5:40–6:10/km, mostly easy.</p>
+    <p><strong>Steady:</strong> about 5:05–5:25/km.</p>
+    <p><strong>Tempo:</strong> start around 4:35–4:50/km, controlled rather than all-out.</p>
+    <p><strong>Strength:</strong> 30–45 minutes of squats or split squats, Romanian deadlifts, calf raises, glute work and core. Avoid exhausting your legs before the long run.</p>
+    <p class="muted small">Paces are guides, not rules. Keep most running easy. Skip the optional run first if tired, and repeat a week rather than forcing mileage if recovery is poor.</p>
+  </section>
+
+  <section class="info strength">
+    <h2>Strength workouts</h2>
+    <div class="segmented" role="tablist" aria-label="Workout type">
+      <button type="button" role="tab" id="tab-home" aria-controls="panel-home" aria-selected="true">Home</button>
+      <button type="button" role="tab" id="tab-gym" aria-controls="panel-gym" aria-selected="false" tabindex="-1">Gym</button>
+    </div>
+    <div role="tabpanel" id="panel-home" aria-labelledby="tab-home">
+      <p class="muted small">30 mins, no equipment</p>
+      <ol>
+        <li>Squats</li>
+        <li>Reverse lunges</li>
+        <li>Single-leg glute bridges</li>
+        <li>Single-leg calf raises</li>
+        <li>Single-leg Romanian deadlift (bodyweight)</li>
+        <li>Plank</li>
+        <li>Side plank</li>
+        <li>Dead bugs</li>
+      </ol>
+      <button type="button" class="primary" data-start-workout>Start home workout</button>
+    </div>
+    <div role="tabpanel" id="panel-gym" aria-labelledby="tab-gym" hidden>
+      <p class="muted small">30 mins, weights and machines</p>
+      <ol>
+        <li>Goblet squats or barbell squats</li>
+        <li>Dumbbell Romanian deadlifts</li>
+        <li>Dumbbell reverse lunges</li>
+        <li>Standing calf raises (machine)</li>
+        <li>Hip thrusts (barbell or machine)</li>
+        <li>Plank</li>
+        <li>Dead bugs</li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="data-actions">
+    <h2>Your data</h2>
+    <p class="muted small" style="margin:0">Your ticks, feelings and paces are saved on this device in local storage. Export a backup if you change phones or browsers.</p>
+    <div class="toolbar">
+      <button id="exportBtn">Export progress</button>
+      <button id="importBtn">Import progress</button>
+      <button id="resetBtn">Reset all</button>
+      <input type="file" id="importFile" accept="application/json,.json" hidden>
+    </div>
+  </section>
+ </div>
+
+ <div class="view" id="view-workout" hidden>
+  <section class="workout">
+    <div class="workout-top">
+      <span id="wkStatus">Home workout</span>
+      <button type="button" class="round-btn" id="wkClose" aria-label="Close workout"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+    </div>
+
+    <div id="wkIntro">
+      <h2>Home strength</h2>
+      <p class="muted small">1 min per exercise with 15 s rest between. No equipment needed.</p>
+      <div class="segmented" id="wkRounds" role="radiogroup" aria-label="Rounds">
+        <button type="button" role="radio" data-rounds="1" aria-checked="false">1 round</button>
+        <button type="button" role="radio" data-rounds="2" aria-checked="false">2 rounds</button>
+        <button type="button" role="radio" data-rounds="3" aria-checked="true">3 rounds</button>
+      </div>
+      <p class="muted small" id="wkLength"></p>
+      <ol class="wk-list" id="wkList"></ol>
+      <button type="button" class="primary" id="wkStart">Start</button>
+    </div>
+
+    <div id="wkRun" hidden>
+      <div class="wk-phase" id="wkPhase">Exercise</div>
+      <div class="wk-ring">
+        <svg viewBox="0 0 120 120" aria-hidden="true"><circle class="track" cx="60" cy="60" r="54"/><circle class="bar" id="wkBar" cx="60" cy="60" r="54"/></svg>
+        <strong id="wkTime" aria-live="off">1:00</strong>
+      </div>
+      <h2 id="wkName"></h2>
+      <p class="muted" id="wkNext"></p>
+      <div class="wk-controls">
+        <button type="button" id="wkPause">Pause</button>
+        <button type="button" id="wkFinish">Finish</button>
+      </div>
+    </div>
+
+    <div id="wkDone" hidden>
+      <h2 id="wkDoneTitle">Workout done</h2>
+      <p class="muted" id="wkSummary"></p>
+      <button type="button" class="primary" id="wkMark">Mark strength done</button>
+      <button type="button" class="wk-back" id="wkBack">Back</button>
+    </div>
+  </section>
+ </div>
+</main>
+<dialog class="feel-dialog" id="feelDialog" aria-labelledby="feelTitle">
+  <h2 id="feelTitle">How did it feel?</h2>
+  <p class="muted small" id="feelSession"></p>
+  <div class="feel-options" id="feelOptions"></div>
+  <button class="feel-skip" id="feelSkip" type="button">Skip</button>
+</dialog>
+<dialog class="sheet" id="gymDialog" aria-labelledby="gymTitle">
+  <h2 id="gymTitle">Gym workout</h2>
+  <p class="muted small">30 mins, weights and machines</p>
+  <ol class="wk-list" id="gymList"></ol>
+  <button type="button" class="feel-skip" id="gymClose">Close</button>
+</dialog>
+<nav class="tabbar" aria-label="Sections">
+  <span class="tab-pill" aria-hidden="true"></span>
+  <a href="#week" data-view="week">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="17" rx="3"/><path d="M3 9h18M8 2v4M16 2v4M8 14l2.5 2.5L16 12"/></svg>
+    Week
+  </a>
+  <a href="#training" data-view="training">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6h11M9 12h11M9 18h11"/><circle cx="4.5" cy="6" r="1.2" fill="currentColor"/><circle cx="4.5" cy="12" r="1.2" fill="currentColor"/><circle cx="4.5" cy="18" r="1.2" fill="currentColor"/></svg>
+    Training
+  </a>
+  <a href="#goal" data-view="goal">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.2" fill="currentColor"/></svg>
+    Goal
+  </a>
+</nav>
+<script src="./app.js"></script>
+</body>
+</html>

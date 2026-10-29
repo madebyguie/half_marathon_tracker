@@ -1,0 +1,25 @@
+{
+  "name": "Half Marathon Training Plan",
+  "short_name": "Half Marathon",
+  "description": "Track your half-marathon training sessions and progress.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#ededf0",
+  "theme_color": "#f6c4c2",
+  "icons": [
+    {
+      "src": "./icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "./icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
